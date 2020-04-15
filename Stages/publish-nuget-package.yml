@@ -1,4 +1,4 @@
-﻿stages:
+stages:
   - stage: publish
     displayName: "Publish stage"
     dependsOn: build
