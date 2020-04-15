@@ -1,19 +1,19 @@
 ﻿parameters:
-- name: ProjectOrSolutionPath
-  type: string
-- name: Major
-  type: number
-  default: 1
-- name: Minor
-  type: number
-  default: 0
+  - name: ProjectOrSolutionPath
+    type: string
+  - name: Major
+    type: number
+    default: 1
+  - name: Minor
+    type: number
+    default: 0
 
 stages:
-- template: /Stages/build-dotnet-solution.yml
-  parameters:
-    ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
-    Major: ${{ parameters.Major }}
-    Minor: ${{ parameters.Minor }}
-    Configuration: Release
-    GeneratePackageOnBuild: true
-- template: /Stages/publish-nuget-package.yml
+  - template: /Stages/build-dotnet-solution.yml
+    parameters:
+      ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
+      Major: ${{ parameters.Major }}
+      Minor: ${{ parameters.Minor }}
+      Configuration: Release
+      GeneratePackageOnBuild: true
+  - template: /Stages/publish-nuget-package.yml
