@@ -1,113 +1,116 @@
 ﻿parameters:
-- name: ProjectOrSolutionPath
-  type: string
-- name: Major
-  type: number
-  default: 1
-- name: Minor
-  type: number
-  default: 0
-- name: Configuration
-  type: string
-  default: Release
-  values:
-  - Debug
-  - Release
-- name: GeneratePackageOnBuild
-  type: boolean
-  default: true
+  - name: ProjectOrSolutionPath
+    type: string
+  - name: Major
+    type: number
+    default: 1
+  - name: Minor
+    type: number
+    default: 0
+  - name: Configuration
+    type: string
+    default: Release
+    values:
+      - Debug
+      - Release
+  - name: GeneratePackageOnBuild
+    type: boolean
+    default: true
 
 stages:
-- stage: build
-  displayName: 'Build stage'
-  jobs:
-  - job: compile
-    displayName: 'Compile, test, and package'
-    pool:
-      vmImage: 'windows-latest'
-    variables:
-      VersionBuild: 0
-      VersionRevision: 0
-    steps:
-      - powershell: |
-          $build = ('{0:yy}{1:000}' -f [datetime]::Today, [datetime]::Today.DayOfYear)
-          Write-Host "##vso[task.setvariable variable=VersionBuild;]$build"
-          $revision = [int](([datetime]::Now - [datetime]::Today).TotalSeconds / 1.4)
-          Write-Host "##vso[task.setvariable variable=VersionRevision;]$revision"
-          Write-Host "##vso[build.updatebuildnumber]${{ parameters.Major }}.${{ parameters.Minor }}.$build.$revision"
-          Write-Host "Build=$build|Revision=$revision"
-        displayName: generate build number
+  - stage: build
+    displayName: "Build stage"
+    jobs:
+      - job: compile
+        displayName: "Compile, test, and package"
+        pool:
+          vmImage: "windows-latest"
+        variables:
+          VersionBuild: 0
+          VersionRevision: 0
+        steps:
+          - checkout: self
+            submodules: true
 
-      - task: DownloadSecureFile@1
-        name: privateSigningKey
-        displayName: download private signing key
-        inputs:
-          secureFile: 'be.stateless.snk'
+          - powershell: |
+              $build = ('{0:yy}{1:000}' -f [datetime]::Today, [datetime]::Today.DayOfYear)
+              Write-Host "##vso[task.setvariable variable=VersionBuild;]$build"
+              $revision = [int](([datetime]::Now - [datetime]::Today).TotalSeconds / 1.4)
+              Write-Host "##vso[task.setvariable variable=VersionRevision;]$revision"
+              Write-Host "##vso[build.updatebuildnumber]${{ parameters.Major }}.${{ parameters.Minor }}.$build.$revision"
+              Write-Host "Build=$build|Revision=$revision"
+            displayName: generate build number
 
-      - task: DotNetCoreCLI@2
-        displayName: dotnet restore
-        inputs:
-          command: 'restore'
-          projects: '${{ parameters.ProjectOrSolutionPath }}'
-          feedsToUse: 'select'
-          verbosityRestore: 'Minimal'
+          - task: DownloadSecureFile@1
+            name: privateSigningKey
+            displayName: download private signing key
+            inputs:
+              secureFile: "be.stateless.snk"
 
-      - task: ResharperCli@2
-        displayName: Resharper code analysis
-        inputs:
-          solutionOrProjectPath: '${{ parameters.ProjectOrSolutionPath }}'
-          failBuildLevelSelector: 'Warning'
-          arguments: '--configuration Release'
-          resultsOutputFilePath: '$(Build.SourcesDirectory)/CodeAnalysisReport'
+          - task: DotNetCoreCLI@2
+            displayName: dotnet restore
+            inputs:
+              command: "restore"
+              projects: "${{ parameters.ProjectOrSolutionPath }}"
+              feedsToUse: "select"
+              verbosityRestore: "Minimal"
 
-      - task: DotNetCoreCLI@2
-        displayName: dotnet build (${{ parameters.Configuration }})
-        inputs:
-          command: 'build'
-          projects: '${{ parameters.ProjectOrSolutionPath }}'
-          arguments: '-p:Configuration=${{ parameters.Configuration }};Major=${{ parameters.Major }};Minor=${{ parameters.Minor }};Build=$(VersionBuild);Revision=$(VersionRevision);AssemblyOriginatorKeyFile=$(privateSigningKey.secureFilePath);GeneratePackageOnBuild=false --no-restore'
+          - task: ResharperCli@2
+            displayName: Resharper code analysis
+            inputs:
+              solutionOrProjectPath: "${{ parameters.ProjectOrSolutionPath }}"
+              failBuildLevelSelector: "Warning"
+              arguments: "--configuration Release"
+              resultsOutputFilePath: "$(Build.SourcesDirectory)/CodeAnalysisReport"
 
-      - task: DotNetCoreCLI@2
-        displayName: dotnet test (${{ parameters.Configuration }})
-        inputs:
-          command: test
-          projects: '**/*.Tests.csproj'
-          arguments: '--configuration Release /p:CollectCoverage=true /p:IncludeTestAssembly=true /p:CoverletOutputFormat=opencover%2ccobertura /p:CoverletOutput=../target/reports/coverage/'
-          nobuild: true
+          - task: DotNetCoreCLI@2
+            displayName: dotnet build (${{ parameters.Configuration }})
+            inputs:
+              command: "build"
+              projects: "${{ parameters.ProjectOrSolutionPath }}"
+              arguments: "-p:Configuration=${{ parameters.Configuration }};Major=${{ parameters.Major }};Minor=${{ parameters.Minor }};Build=$(VersionBuild);Revision=$(VersionRevision);AssemblyOriginatorKeyFile=$(privateSigningKey.secureFilePath);GeneratePackageOnBuild=false --no-restore"
 
-      - task: reportgenerator@4
-        displayName: generate code coverage report
-        inputs:
-          reports: 'src\target\reports\coverage\coverage.*.opencover.xml'
-          targetdir: 'src\target\reports\coverage'
-          reporttypes: 'HtmlInline_AzurePipelines;Cobertura;Badges'
-          assemblyfilters: '-xunit*'
-          verbosity: 'Info' # Verbose, Info, Warning, Error, Off
+          - task: DotNetCoreCLI@2
+            displayName: dotnet test (${{ parameters.Configuration }})
+            inputs:
+              command: test
+              projects: "**/*.Tests.csproj"
+              arguments: "--configuration Release /p:CollectCoverage=true /p:IncludeTestAssembly=true /p:CoverletOutputFormat=opencover%2ccobertura /p:CoverletOutput=../target/reports/coverage/"
+              nobuild: true
 
-      - task: PublishCodeCoverageResults@1
-        displayName: publish code coverage report
-        inputs:
-          codeCoverageTool: Cobertura
-          summaryFileLocation: '$(build.sourcesdirectory)\src\target\reports\coverage\cobertura.xml'
-          reportDirectory: '$(build.sourcesdirectory)\src\target\reports\coverage'
+          - task: reportgenerator@4
+            displayName: generate code coverage report
+            inputs:
+              reports: 'src\target\reports\coverage\coverage.*.opencover.xml'
+              targetdir: 'src\target\reports\coverage'
+              reporttypes: "HtmlInline_AzurePipelines;Cobertura;Badges"
+              assemblyfilters: "-xunit*"
+              verbosity: "Info" # Verbose, Info, Warning, Error, Off
 
-      - task: DotNetCoreCLI@2
-        displayName: dotnet pack (${{ parameters.Configuration }})
-        condition: eq('${{ parameters.GeneratePackageOnBuild }}', true)
-        inputs:
-          command: 'pack'
-          packagesToPack: '**/*.csproj'
-          configuration: '${{ parameters.Configuration }}'
-          packDirectory: '$(build.artifactstagingdirectory)/packages'
-          nobuild: true
-          includesymbols: true
-          versioningScheme: 'byBuildNumber'
-          verbosityPack: 'Normal'
+          - task: PublishCodeCoverageResults@1
+            displayName: publish code coverage report
+            inputs:
+              codeCoverageTool: Cobertura
+              summaryFileLocation: '$(build.sourcesdirectory)\src\target\reports\coverage\cobertura.xml'
+              reportDirectory: '$(build.sourcesdirectory)\src\target\reports\coverage'
 
-      - task: PublishBuildArtifacts@1
-        displayName: publish build artifacts (${{ parameters.Configuration }})
-        condition: eq('${{ parameters.GeneratePackageOnBuild }}', true)
-        inputs:
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)/packages'
-          ArtifactName: 'nugetPackage'
-          publishLocation: 'Container'
+          - task: DotNetCoreCLI@2
+            displayName: dotnet pack (${{ parameters.Configuration }})
+            condition: eq('${{ parameters.GeneratePackageOnBuild }}', true)
+            inputs:
+              command: "pack"
+              packagesToPack: "**/*.csproj"
+              configuration: "${{ parameters.Configuration }}"
+              packDirectory: "$(build.artifactstagingdirectory)/packages"
+              nobuild: true
+              includesymbols: true
+              versioningScheme: "byBuildNumber"
+              verbosityPack: "Normal"
+
+          - task: PublishBuildArtifacts@1
+            displayName: publish build artifacts (${{ parameters.Configuration }})
+            condition: eq('${{ parameters.GeneratePackageOnBuild }}', true)
+            inputs:
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)/packages"
+              ArtifactName: "nugetPackage"
+              publishLocation: "Container"
