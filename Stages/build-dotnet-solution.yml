@@ -74,8 +74,8 @@ stages:
             displayName: dotnet test (${{ parameters.Configuration }})
             inputs:
               command: test
-              projects: "**/*.Tests.csproj"
-              arguments: "--configuration Release /p:CollectCoverage=true /p:IncludeTestAssembly=true /p:CoverletOutputFormat=opencover%2ccobertura /p:CoverletOutput=../target/reports/coverage/"
+              projects: "${{ parameters.ProjectOrSolutionPath }}"
+              arguments: "--configuration ${{ parameters.Configuration }} /p:CollectCoverage=true /p:IncludeTestAssembly=true /p:CoverletOutputFormat=opencover%2ccobertura /p:CoverletOutput=../target/reports/coverage/"
               nobuild: true
 
           - task: reportgenerator@4
