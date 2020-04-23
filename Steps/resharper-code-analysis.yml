@@ -1,0 +1,18 @@
+parameters:
+  - name: ProjectOrSolutionPath
+    type: string
+  - name: Configuration
+    type: string
+    default: Release
+    values:
+      - Debug
+      - Release
+
+steps:
+  - task: ResharperCli@2
+    displayName: Resharper code analysis
+    inputs:
+      solutionOrProjectPath: "${{ parameters.ProjectOrSolutionPath }}"
+      failBuildLevelSelector: "Error"
+      arguments: "--configuration ${{ parameters.Configuration }}"
+      resultsOutputFilePath: "$(Build.SourcesDirectory)/CodeAnalysisReport"

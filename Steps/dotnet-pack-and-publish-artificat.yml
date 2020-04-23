@@ -1,0 +1,27 @@
+parameters:
+  - name: Configuration
+    type: string
+    default: Release
+    values:
+      - Debug
+      - Release
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: dotnet pack (${{ parameters.Configuration }})
+    inputs:
+      command: "pack"
+      packagesToPack: "**/*.csproj"
+      configuration: "${{ parameters.Configuration }}"
+      packDirectory: "$(build.artifactstagingdirectory)/packages"
+      nobuild: true
+      includesymbols: true
+      versioningScheme: "byBuildNumber"
+      verbosityPack: "Normal"
+
+  - task: PublishBuildArtifacts@1
+    displayName: publish build artifacts (${{ parameters.Configuration }})
+    inputs:
+      PathtoPublish: "$(Build.ArtifactStagingDirectory)/packages"
+      ArtifactName: "nugetPackage"
+      publishLocation: "Container"

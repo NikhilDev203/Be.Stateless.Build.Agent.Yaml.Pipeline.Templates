@@ -1,0 +1,17 @@
+parameters:
+  - name: ProjectOrSolutionPath
+    type: string
+  - name: Configuration
+    type: string
+    default: Release
+    values:
+      - Debug
+      - Release
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: dotnet test (${{ parameters.Configuration }})
+    inputs:
+      command: test
+      projects: "${{ parameters.ProjectOrSolutionPath }}"
+      arguments: "--no-build --configuration ${{ parameters.Configuration }}"

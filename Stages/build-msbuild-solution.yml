@@ -36,7 +36,7 @@ stages:
               Major: ${{ parameters.Major }}
               Minor: ${{ parameters.Minor }}
 
-          - template: /Steps/dotnet-build-and-test.yml
+          - template: /Steps/msbuild-build-and-test.yml
             parameters:
               ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
               Major: ${{ parameters.Major }}

@@ -7,6 +7,7 @@ stages:
       - job: publish
         displayName: "Create github release and publish package on nuget.org"
         steps:
+          - checkout: none
           - task: GitHubRelease@1
             displayName: create github release
             inputs:
@@ -30,7 +31,7 @@ stages:
             displayName: nuget push
             inputs:
               command: "push"
-              packagesToPush: "$(System.ArtifactsDirectory)/**/*.nupkg"
+              packagesToPush: "$(System.ArtifactsDirectory)/**/*.*nupkg"
               nuGetFeedType: "external"
               publishFeedCredentials: "nuget.org_be.stateless"
               verbosityPush: "Normal"

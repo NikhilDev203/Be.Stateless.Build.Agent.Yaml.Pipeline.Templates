@@ -1,0 +1,14 @@
+parameters:
+  - name: ProjectOrSolutionPath
+    type: string
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: dotnet restore
+    inputs:
+      command: "restore"
+      projects: "${{ parameters.ProjectOrSolutionPath }}"
+      feedsToUse: "select"
+      # NuGet Feed: BizTalk.Server.Library
+      vstsFeed: '568ac931-8b86-4fbe-b160-b717abb6a957/4d312fc6-3c84-4aa3-9b2d-287dc408ecf9'
+      verbosityRestore: "Minimal"

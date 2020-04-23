@@ -1,0 +1,17 @@
+parameters:
+  - name: Major
+    type: number
+    default: 1
+  - name: Minor
+    type: number
+    default: 0
+
+steps:
+  - powershell: |
+      $build = ('{0:yy}{1:000}' -f [datetime]::Today, [datetime]::Today.DayOfYear)
+      Write-Host "##vso[task.setvariable variable=VersionBuild;]$build"
+      $revision = [int](([datetime]::Now - [datetime]::Today).TotalSeconds / 1.4)
+      Write-Host "##vso[task.setvariable variable=VersionRevision;]$revision"
+      Write-Host "##vso[build.updatebuildnumber]${{ parameters.Major }}.${{ parameters.Minor }}.$build.$revision"
+      Write-Host "Build=$build|Revision=$revision"
+    displayName: generate build number
