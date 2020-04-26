@@ -1,0 +1,95 @@
+parameters:
+  - name: ProjectOrSolutionPath
+    type: string
+  - name: Major
+    type: number
+    default: 1
+  - name: Minor
+    type: number
+    default: 0
+  - name: Configuration
+    type: string
+    default: Release
+    values:
+      - Debug
+      - Release
+  - name: GeneratePackageOnBuild
+    type: boolean
+    default: true
+
+stages:
+  - stage: build
+    displayName: "Build stage"
+    variables:
+      VersionBuild: 0
+      VersionRevision: 0
+      PrivateSigningKeyPath: ""
+    jobs:
+      - job: prepare
+        displayName: "Generate build number and download private signing key"
+        pool:
+          vmImage: "windows-latest"
+        steps:
+          - template: /Steps/generate-build-number.yml
+            parameters:
+              Major: ${{ parameters.Major }}
+              Minor: ${{ parameters.Minor }}
+
+          - template: /Steps/download-private-signing-key.yml
+      - job: compile
+        displayName: "Compile"
+        pool:
+          vmImage: "windows-latest"
+        dependsOn: prepare
+        condition: succeeded()
+        pool:
+          vmImage: "windows-latest"
+        steps:
+          - checkout: self
+            submodules: true
+
+          - template: /Steps/dotnet-restore.yml
+            parameters:
+              ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
+          
+          - template: /Steps/dotnet-build.yml
+            parameters:
+              ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
+              Major: ${{ parameters.Major }}
+              Minor: ${{ parameters.Minor }}
+              Build: $(VersionBuild)
+              Revision: $(VersionRevision)
+              PrivateSigningKeyPath: $(privateSigningKey.secureFilePath)
+
+          - ${{ if eq(parameters.GeneratePackageOnBuild, true) }}:
+            - template: /Steps/dotnet-pack-and-publish-artificat.yml
+      - job: test
+        dependsOn: compile
+        condition: succeeded()
+        displayName: "Test"
+        pool:
+          vmImage: "windows-latest"
+        steps:
+          - template: /Steps/dotnet-test.yml
+            parameters:
+              ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
+              Configuration: ${{ parameters.Configuration }}
+
+      - job: codeAnalysis
+        displayName: "Analyze code"
+        dependsOn: prepare
+        condition: succeeded()
+        pool:
+          vmImage: "windows-latest"
+        steps:
+          - checkout: self
+            submodules: true
+          
+          - template: /Steps/dotnet-restore.yml
+            parameters:
+              ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
+          
+          - template: /Steps/resharper-code-analysis.yml
+            parameters:
+              ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
+              Configuration: ${{ parameters.Configuration }}
