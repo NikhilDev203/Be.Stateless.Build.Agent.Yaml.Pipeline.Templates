@@ -4,3 +4,6 @@ steps:
     displayName: download private signing key
     inputs:
       secureFile: "be.stateless.snk"
+  - powershell: |
+      Write-Host "##vso[task.setvariable variable=PrivateSigningKeyPath;]$(privateSigningKey.secureFilePath)"
+    displayName: udpate private signing key path

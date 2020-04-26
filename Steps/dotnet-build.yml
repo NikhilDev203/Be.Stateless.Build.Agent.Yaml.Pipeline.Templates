@@ -1,0 +1,31 @@
+parameters:
+  - name: ProjectOrSolutionPath
+    type: string
+  - name: Major
+    type: number
+    default: 1
+  - name: Minor
+    type: number
+    default: 0
+  - name: Build
+    type: number
+    default: 1
+  - name: Revision
+    type: number
+    default: 0
+  - name: Configuration
+    type: string
+    default: Release
+    values:
+      - Debug
+      - Release
+  - name: PrivateSigningKeyPath
+    type: string
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: dotnet build (${{ parameters.Configuration }})
+    inputs:
+      command: "build"
+      projects: "${{ parameters.ProjectOrSolutionPath }}"
+      arguments: "-p:Configuration=${{ parameters.Configuration }};Major=${{ parameters.Major }};Minor=${{ parameters.Minor }};Build=${{ parameters.Build }};Revision=${{ parameters.Revision }};AssemblyOriginatorKeyFile=${{ parameters.PrivateSigningKeyPath }};GeneratePackageOnBuild=false --no-restore"
