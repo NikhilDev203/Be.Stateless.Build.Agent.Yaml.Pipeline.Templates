@@ -55,8 +55,6 @@ stages:
               ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
               Major: ${{ parameters.Major }}
               Minor: ${{ parameters.Minor }}
-              Build: $(VersionBuild)
-              Revision: $(VersionRevision)
               PrivateSigningKeyPath: $(privateSigningKey.secureFilePath)
 
           - ${{ if eq(parameters.GeneratePackageOnBuild, true) }}:
