@@ -42,8 +42,6 @@ stages:
           vmImage: "windows-latest"
         dependsOn: prepare
         condition: succeeded()
-        pool:
-          vmImage: "windows-latest"
         steps:
           - checkout: self
             submodules: true
