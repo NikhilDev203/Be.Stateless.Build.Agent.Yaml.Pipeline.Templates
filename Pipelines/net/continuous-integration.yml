@@ -9,7 +9,7 @@ parameters:
     default: 0
 
 stages:
-  - template: /Stages/net/build-dotnet-solution.yml
+  - template: /Stages/net/build.yml
     parameters:
       ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
       Major: ${{ parameters.Major }}
