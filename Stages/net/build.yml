@@ -71,22 +71,21 @@ stages:
               ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
               Configuration: ${{ parameters.Configuration }}
 
-      - job: codeAnalysis
-        displayName: "Analyze code"
-        dependsOn: prepare
-        condition: succeeded()
-        enable: false
-        pool:
-          vmImage: "windows-latest"
-        steps:
-          - checkout: self
-            submodules: true
-          
-          - template: /Steps/dotnet-restore.yml
-            parameters:
-              ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
-          
-          - template: /Steps/resharper-code-analysis.yml
-            parameters:
-              ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
-              Configuration: ${{ parameters.Configuration }}
+     # - job: codeAnalysis
+     #   displayName: "Analyze code"
+     #   dependsOn: prepare
+     #   condition: succeeded()
+     #   pool:
+     #     vmImage: "windows-latest"
+     #   steps:
+     #     - checkout: self
+     #       submodules: true
+     #     
+     #     - template: /Steps/dotnet-restore.yml
+     #       parameters:
+     #         ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
+     #     
+     #     - template: /Steps/resharper-code-analysis.yml
+     #       parameters:
+     #         ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
+     #         Configuration: ${{ parameters.Configuration }}
