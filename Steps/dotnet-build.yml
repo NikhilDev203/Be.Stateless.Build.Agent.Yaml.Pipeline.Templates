@@ -13,8 +13,6 @@ parameters:
     values:
       - Debug
       - Release
-  - name: PrivateSigningKeyPath
-    type: string
 
 steps:
   - task: DotNetCoreCLI@2
