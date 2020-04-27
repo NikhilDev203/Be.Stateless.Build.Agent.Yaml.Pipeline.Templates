@@ -26,7 +26,7 @@ stages:
       PrivateSigningKeyPath: ""
     jobs:
       - job: prepare
-        displayName: "Generate build number and download private signing key"
+        displayName: "Generate build number"
         pool:
           vmImage: "windows-latest"
         steps:
@@ -35,7 +35,6 @@ stages:
               Major: ${{ parameters.Major }}
               Minor: ${{ parameters.Minor }}
 
-          - template: /Steps/download-private-signing-key.yml
       - job: compile
         displayName: "Compile"
         pool:
@@ -45,6 +44,8 @@ stages:
         steps:
           - checkout: self
             submodules: true
+
+          - template: /Steps/download-private-signing-key.yml
 
           - template: /Steps/dotnet-restore.yml
             parameters:
