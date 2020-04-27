@@ -27,9 +27,9 @@ stages:
     jobs:
       - job: prepare
         displayName: "Generate build number"
-        pool:
-          vmImage: "windows-latest"
         steps:
+          - checkout: none
+
           - template: /Steps/generate-build-number.yml
             parameters:
               Major: ${{ parameters.Major }}
@@ -56,7 +56,6 @@ stages:
               ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
               Major: ${{ parameters.Major }}
               Minor: ${{ parameters.Minor }}
-              PrivateSigningKeyPath: $[ variables['rivateSigningKey.secureFilePath'] ]
 
           - ${{ if eq(parameters.GeneratePackageOnBuild, true) }}:
             - template: /Steps/dotnet-pack-and-publish-artificat.yml
@@ -76,6 +75,7 @@ stages:
         displayName: "Analyze code"
         dependsOn: prepare
         condition: succeeded()
+        enabled: false
         pool:
           vmImage: "windows-latest"
         steps:

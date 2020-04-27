@@ -22,4 +22,4 @@ steps:
     inputs:
       command: "build"
       projects: "${{ parameters.ProjectOrSolutionPath }}"
-      arguments: "-p:Configuration=${{ parameters.Configuration }};Major=${{ parameters.Major }};Minor=${{ parameters.Minor }};Build=$(VersionBuild);Revision=$(VersionRevision);AssemblyOriginatorKeyFile=${{ parameters.PrivateSigningKeyPath }};GeneratePackageOnBuild=false --no-restore"
+      arguments: "-p:Configuration=${{ parameters.Configuration }};Major=${{ parameters.Major }};Minor=${{ parameters.Minor }};Build=$(VersionBuild);Revision=$(VersionRevision);AssemblyOriginatorKeyFile=$(PrivateSigningKeyPath);GeneratePackageOnBuild=false --no-restore"
