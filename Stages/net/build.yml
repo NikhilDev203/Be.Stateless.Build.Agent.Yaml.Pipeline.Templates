@@ -56,7 +56,7 @@ stages:
               ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
               Major: ${{ parameters.Major }}
               Minor: ${{ parameters.Minor }}
-              PrivateSigningKeyPath: $(privateSigningKey.secureFilePath)
+              PrivateSigningKeyPath: ${{ privateSigningKey.secureFilePath }}
 
           - ${{ if eq(parameters.GeneratePackageOnBuild, true) }}:
             - template: /Steps/dotnet-pack-and-publish-artificat.yml
