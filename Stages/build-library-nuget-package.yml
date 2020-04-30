@@ -3,19 +3,15 @@ parameters:
     type: string
   - name: Major
     type: number
-    default: 1
   - name: Minor
     type: number
-    default: 0
   - name: Configuration
     type: string
-    default: Release
     values:
       - Debug
       - Release
   - name: GeneratePackageOnBuild
     type: boolean
-    default: true
 
 stages:
   - stage: build
@@ -26,7 +22,7 @@ stages:
       PrivateSigningKeyPath: ""
     jobs:
       - job: prepare
-        displayName: "Generate build number"
+        displayName: "Prepare"
         steps:
           - checkout: none
 
@@ -35,8 +31,8 @@ stages:
               Major: ${{ parameters.Major }}
               Minor: ${{ parameters.Minor }}
 
-      - job: compile
-        displayName: "Compile"
+      - job: build
+        displayName: "Compile, test, and pack"
         pool:
           vmImage: "windows-latest"
         dependsOn: prepare
@@ -50,42 +46,45 @@ stages:
           - template: /Steps/dotnet-restore.yml
             parameters:
               ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
-          
+
           - template: /Steps/dotnet-build.yml
             parameters:
               ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
+              Configuration: ${{ parameters.Configuration }}
               Major: ${{ parameters.Major }}
               Minor: ${{ parameters.Minor }}
 
-          - ${{ if eq(parameters.GeneratePackageOnBuild, true) }}:
-            - template: /Steps/dotnet-pack-and-publish-artificat.yml
-      - job: test
-        dependsOn: compile
-        condition: succeeded()
-        displayName: "Test"
-        pool:
-          vmImage: "windows-latest"
-        steps:
           - template: /Steps/dotnet-test.yml
             parameters:
               ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
               Configuration: ${{ parameters.Configuration }}
 
-     # - job: codeAnalysis
-     #   displayName: "Analyze code"
-     #   dependsOn: prepare
-     #   condition: succeeded()
-     #   pool:
-     #     vmImage: "windows-latest"
-     #   steps:
-     #     - checkout: self
-     #       submodules: true
-     #     
-     #     - template: /Steps/dotnet-restore.yml
-     #       parameters:
-     #         ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
-     #     
-     #     - template: /Steps/resharper-code-analysis.yml
-     #       parameters:
-     #         ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
-     #         Configuration: ${{ parameters.Configuration }}
+          - ${{ if eq(parameters.GeneratePackageOnBuild, true) }}:
+            - template: /Steps/dotnet-pack.yml
+              parameters:
+                Configuration: ${{ parameters.Configuration }}
+                Major: ${{ parameters.Major }}
+                Minor: ${{ parameters.Minor }}
+
+            - template: /Steps/publish-build-artifact
+              parameters:
+                Configuration: ${{ parameters.Configuration }}
+
+      - job: analyzeCode
+        displayName: "Analyze code"
+        dependsOn: prepare
+        condition: succeeded()
+        pool:
+          vmImage: "windows-latest"
+        steps:
+          - checkout: self
+            submodules: true
+
+          - template: /Steps/dotnet-restore.yml
+            parameters:
+              ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
+
+          - template: /Steps/analyze-code-with-resharper.yml
+            parameters:
+              ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
+              Configuration: ${{ parameters.Configuration }}

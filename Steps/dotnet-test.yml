@@ -3,7 +3,6 @@ parameters:
     type: string
   - name: Configuration
     type: string
-    default: Release
     values:
       - Debug
       - Release

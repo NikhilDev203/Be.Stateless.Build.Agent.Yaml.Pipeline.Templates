@@ -1,0 +1,8 @@
+steps:
+  - task: DownloadBuildArtifacts@0
+    displayName: download nuget package artifact
+    inputs:
+      buildType: "current"
+      downloadType: "single"
+      artifactName: "nugetPackage"
+      downloadPath: "$(System.ArtifactsDirectory)"

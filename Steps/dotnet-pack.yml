@@ -1,7 +1,6 @@
 parameters:
   - name: Configuration
     type: string
-    default: Release
     values:
       - Debug
       - Release
@@ -18,10 +17,3 @@ steps:
       includesymbols: true
       versioningScheme: "byBuildNumber"
       verbosityPack: "Normal"
-
-  - task: PublishBuildArtifacts@1
-    displayName: publish build artifacts (${{ parameters.Configuration }})
-    inputs:
-      PathtoPublish: "$(Build.ArtifactStagingDirectory)/packages"
-      ArtifactName: "nugetPackage"
-      publishLocation: "Container"

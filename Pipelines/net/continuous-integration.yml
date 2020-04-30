@@ -3,13 +3,11 @@ parameters:
     type: string
   - name: Major
     type: number
-    default: 1
   - name: Minor
     type: number
-    default: 0
 
 stages:
-  - template: /Stages/net/build.yml
+  - template: /Stages/build-library-nuget-package.yml
     parameters:
       ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
       Major: ${{ parameters.Major }}

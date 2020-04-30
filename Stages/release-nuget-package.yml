@@ -1,0 +1,16 @@
+stages:
+  - stage: release
+    displayName: "Release stage"
+    dependsOn: build
+    condition: succeeded()
+    jobs:
+      - job: publish
+        displayName: "Create github release and publish package on nuget.org"
+        steps:
+          - checkout: none
+
+          - template: /Steps/download-nuget-package-artifact.yml
+
+          - template: /Steps/create-github-release.yml
+
+          - template: /Steps/nuget-push-to-nuget-org.yml

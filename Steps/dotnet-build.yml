@@ -3,13 +3,10 @@ parameters:
     type: string
   - name: Major
     type: number
-    default: 1
   - name: Minor
     type: number
-    default: 0
   - name: Configuration
     type: string
-    default: Release
     values:
       - Debug
       - Release
