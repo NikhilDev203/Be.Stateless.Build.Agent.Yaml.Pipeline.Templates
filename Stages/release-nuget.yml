@@ -9,7 +9,7 @@ stages:
         steps:
           - checkout: none
 
-          - template: /Steps/download-nuget-package-artifact.yml
+          - template: /Steps/download-nuget-build-artifact.yml
 
           - template: /Steps/create-github-release.yml
 

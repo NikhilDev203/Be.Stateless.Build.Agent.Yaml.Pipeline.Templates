@@ -1,6 +1,6 @@
 steps:
   - task: DownloadBuildArtifacts@0
-    displayName: download nuget package artifact
+    displayName: download nuget build artifact
     inputs:
       buildType: "current"
       downloadType: "single"

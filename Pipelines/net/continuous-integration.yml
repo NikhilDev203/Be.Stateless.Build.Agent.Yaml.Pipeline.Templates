@@ -7,7 +7,7 @@ parameters:
     type: number
 
 stages:
-  - template: /Stages/build-library-nuget-package.yml
+  - template: /Stages/build-dotnet-nuget.yml
     parameters:
       ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
       Major: ${{ parameters.Major }}
