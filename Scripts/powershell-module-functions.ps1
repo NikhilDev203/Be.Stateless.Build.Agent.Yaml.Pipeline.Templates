@@ -5,14 +5,11 @@ function Get-ModuleManifest {
         [string]
         $Path
     )
-    $moduleManifestFiles = Get-ChildItem *.psd1 -File -Recurse -Depth 1 -Path $Path
-    if ($moduleManifestFiles.Count -gt 1) {
-        throw "There are more than one module manifest file in '$($Path.FullName)'."
+    $moduleManifestFile = Get-ChildItem -Path $Path -Filter *.psd1 -File -Recurse -Depth 1
+    if ($moduleManifestFile -isnot [System.IO.FileInfo]) {
+        throw "Unique module manifest file could not be found in '$($Path.FullName)'."
     }
-    if ($moduleManifestFiles.Count -eq 0) {
-        throw "There is no module manifest file '$($Path.FullName)'."
-    }
-    $moduleManifestFiles | Select-Object -First 1
+    $moduleManifestFile
 }
 
 function Update-ModuleVersion {
@@ -26,7 +23,6 @@ function Update-ModuleVersion {
         [version]
         $Version
     )
-    $match = "(ModuleVersion\s*=\s*)(['|`"]\d*(.\d*){1,3}['|`"])"
-    $replacement = "`$1'$Version'"
-    Get-Content $Path -Encoding utf8 | ForEach-Object { $_ -creplace $match, $replacement } | Set-Content -Path $Path -Encoding utf8
+    $pattern = "(ModuleVersion\s*=\s*['`"])\d+(?:\.\d+){1,3}(['`"])"
+    (Get-Content $Path -Encoding utf8BOM -Raw) -creplace $pattern, "`${1}$Version`${2}" | Set-Content -Path $Path -Encoding utf8BOM
 }
