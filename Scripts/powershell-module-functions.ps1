@@ -28,5 +28,5 @@ function Update-ModuleVersion {
     )
     $match = "(ModuleVersion\s*=\s*)(['|`"]\d*(.\d*){1,3}['|`"])"
     $replacement = "`$1'$Version'"
-    Get-Content $Path -Encoding utf8BOM | ForEach-Object { $_ -creplace $match, $replacement } | Set-Content -Path $Path -Encoding utf8BOM
+    Get-Content $Path -Encoding utf8 | ForEach-Object { $_ -creplace $match, $replacement } | Set-Content -Path $Path -Encoding utf8
 }
