@@ -2,10 +2,12 @@
 [OutputType([void])]
 param(
     [Parameter(Mandatory = $true)]
+    [ValidateScript( { Test-Path -Path $_ -PathType Container })]
     [string]
     $Path,
 
     [Parameter(Mandatory = $true)]
+    [ValidateScript( { Test-Path -Path $_ -PathType Container })]
     [string]
     $Destination,
 
@@ -22,17 +24,12 @@ param(
     $CertificatePassword
 )
 
-
 . $PSScriptRoot\powershell-module-functions.ps1
 
 $Path = Resolve-Path $Path -ErrorAction Stop
 $Destination = Resolve-Path $Destination
 Write-Verbose "Path: '$Path'."
 Write-Verbose "Destination: '$Destination'."
-
-if ( -not (Test-Path -Path $Path)) {
-    throw "The path '$($Path.FullName)' does not exist."
-}
 
 # Get Module Name
 $moduleManifestFile = Get-ModuleManifest -Path $Path

@@ -4,6 +4,7 @@ param(
     [Parameter(Mandatory = $true)]
     [string]
     $Path,
+
     [Parameter(Mandatory = $true)]
     [string]
     $NuGetApiKey
@@ -19,5 +20,4 @@ Write-Host "Module manifest file: '$($moduleManifestFile.FullName)'."
 $modulePath = Split-Path $moduleManifestFile.FullName
 Write-Host "Module path: '$modulePath'."
 
-# Publish PowerShell Module on PowerShell Gallery
 Publish-Module -Path $modulePath -NuGetApiKey $NuGetApiKey

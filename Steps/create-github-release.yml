@@ -2,7 +2,7 @@ steps:
   - task: GitHubRelease@1
     displayName: create github release
     inputs:
-      gitHubConnection: "github.com_emmanuelbenitez"
+      gitHubConnection: "github.com_icraftsoftware"
       repositoryName: "$(Build.Repository.Name)"
       action: "create"
       target: "$(Build.SourceVersion)"
@@ -11,4 +11,3 @@ steps:
       title: "$(Build.BuildNumber)"
       changeLogCompareToRelease: "lastFullRelease"
       changeLogType: "commitBased"
-      #assets: "$(System.ArtifactsDirectory)/**/*.*nupkg"

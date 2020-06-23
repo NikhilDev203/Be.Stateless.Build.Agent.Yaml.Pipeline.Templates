@@ -14,7 +14,7 @@ stages:
     variables:
       - name: 'CodeSigningCertificatePath'
         value: ''
-      - group: 'code-signing-certificate'
+      - group: 'code-signing-certificates'
     jobs:
       - job: build
         pool:

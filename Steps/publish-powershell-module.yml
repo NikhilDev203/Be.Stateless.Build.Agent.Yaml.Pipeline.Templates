@@ -2,5 +2,5 @@ steps:
   - task: PowerShell@2
     inputs:
       filePath: '$(Build.SourcesDirectory)\Scripts\publish-powershell-module.ps1'
-      arguments: '-Path "$(System.ArtifactsDirectory)/powershellModule" -NuGetApiKey $(nuget-api-key)'
+      arguments: '-Path "$(System.ArtifactsDirectory)/powershellModule" -NuGetApiKey $(powershell-gallery-api-key)'
     displayName: publish PowerShell module on PowerShell gallery
