@@ -1,5 +1,5 @@
 steps:
-  - task: Pester@9
+  - task: Pester@10
     displayName: "test PowerShell module with Pester"
     inputs:
       scriptFolder: '$(build.sourcesdirectory)\m'
@@ -7,21 +7,19 @@ steps:
       CodeCoverageOutputFile: '$(build.sourcesdirectory)\coverage.powershell-module.xml'
       CodeCoverageFolder: '$(build.sourcesdirectory)\m'
       usePSCore: False
-      PesterVersion: 'OtherVersion'
-      preferredPesterVersion: '4.10.1'
     continueOnError: true
   - task: PublishTestResults@2
     displayName: "publish test results"
     inputs:
-      testResultsFormat: 'NUnit'
+      testResultsFormat: "NUnit"
       testResultsFiles: "$(build.sourcesdirectory)/powershell-module.tests.xml"
       mergeTestResults: true
       failTaskOnFailedTests: true
-      testRunTitle: 'PowerShell Module Tests'
+      testRunTitle: "PowerShell Module Tests"
   - task: PublishCodeCoverageResults@1
     displayName: "publish code coverage"
     inputs:
-      codeCoverageTool: 'JaCoCo'
+      codeCoverageTool: "JaCoCo"
       summaryFileLocation: '$(build.sourcesdirectory)\coverage.powershell-module.xml'
       pathToSources: '$(build.sourcesdirectory)\m'
       failIfCoverageEmpty: false
