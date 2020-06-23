@@ -13,4 +13,4 @@ stages:
       Major: ${{ parameters.Major }}
       Minor: ${{ parameters.Minor }}
       Configuration: Debug
-      GeneratePackageOnBuild: false
+      SkipBuildArtifactPackagingAndPublication: true

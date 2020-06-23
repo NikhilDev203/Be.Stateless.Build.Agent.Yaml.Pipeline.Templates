@@ -1,0 +1,14 @@
+parameters:
+  - name: ArtifactName
+    type: string
+  - name: DownloadPath
+    type: string
+
+steps:
+  - task: DownloadBuildArtifacts@0
+    displayName: download nuget build artifact
+    inputs:
+      buildType: "current"
+      downloadType: "single"
+      artifactName: ${{ parameters.ArtifactName }}
+      downloadPath: ${{ parameters.DownloadPath }}

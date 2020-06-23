@@ -10,7 +10,7 @@ parameters:
     values:
       - Debug
       - Release
-  - name: GeneratePackageOnBuild
+  - name: SkipBuildArtifactPackagingAndPublication
     type: boolean
 
 stages:
@@ -59,14 +59,15 @@ stages:
               ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
               Configuration: ${{ parameters.Configuration }}
 
-          - ${{ if eq(parameters.GeneratePackageOnBuild, true) }}:
+          - ${{ if eq(parameters.SkipBuildArtifactPackagingAndPublication, false) }}:
             - template: /Steps/dotnet-pack.yml
               parameters:
                 Configuration: ${{ parameters.Configuration }}
 
-            - template: /Steps/publish-nuget-build-artifact.yml
+            - template: /Steps/publish-build-artifact.yml
               parameters:
-                Configuration: ${{ parameters.Configuration }}
+                ArtifactName: "nugetPackage"
+                PathToPublish: "$(Build.ArtifactStagingDirectory)/packages"
 
       - job: analyzeCode
         displayName: "Analyze code"

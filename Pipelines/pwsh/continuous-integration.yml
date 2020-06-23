@@ -1,0 +1,15 @@
+parameters:
+  - name: Major
+    type: number
+  - name: Minor
+    type: number
+  - name: SkipTest
+    type: boolean
+
+stages:
+  - template: /Stages/build-powershell-module.yml
+    parameters:
+      Major: ${{ parameters.Major }}
+      Minor: ${{ parameters.Minor }}
+      SkipTest: ${{ parameters.SkipTest }}
+      SkipBuildArtifactPackagingAndPublication: true

@@ -3,17 +3,22 @@ stages:
     displayName: "Release stage"
     dependsOn: build
     condition: succeeded()
+    variables:
+      - group: 'powershell-gallery'
     jobs:
       - job: publish
-        displayName: "Create github release and publish package on nuget.org"
+        pool:
+          vmImage: "windows-latest"
+        displayName: "Create github release and publish PowerShell Module on PSGallery"
         steps:
-          - checkout: none
+          - checkout: templates
+            path: 's\t'
 
           - template: /Steps/download-build-artifact.yml
             parameters:
-              ArtifactName: "nugetPackage"
+              ArtifactName: "powershellModule"
               DownloadPath: "$(System.ArtifactsDirectory)"
 
           - template: /Steps/create-github-release.yml
 
-          - template: /Steps/nuget-push-to-nuget-org.yml
+          - template: /Steps/publish-powershell-module.yml

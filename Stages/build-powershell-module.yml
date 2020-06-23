@@ -1,0 +1,43 @@
+parameters:
+  - name: Major
+    type: number
+  - name: Minor
+    type: number
+  - name: SkipTest
+    type: boolean
+  - name: SkipBuildArtifactPackagingAndPublication
+    type: boolean
+
+stages:
+  - stage: build
+    displayName: "Build stage"
+    variables:
+      - name: 'CodeSigningCertificatePath'
+        value: ''
+      - group: 'code-signing-certificate'
+    jobs:
+      - job: build
+        pool:
+          vmImage: "windows-latest"
+        displayName: "Test, sign and pack"
+        steps:
+          - checkout: self
+            path: 's\m'
+          - checkout: templates
+            path: 's\t'
+
+          - template: /Steps/generate-build-number.yml
+            parameters:
+              Major: ${{ parameters.Major }}
+              Minor: ${{ parameters.Minor }}
+
+          - ${{ if eq(parameters.SkipTest, false) }}:
+            - template: /Steps/test-powershell-module.yml
+
+          - ${{ if eq(parameters.SkipBuildArtifactPackagingAndPublication, false) }}:
+            - template: /Steps/download-private-code-signing-certificate.yml
+            - template: /Steps/pack-powershell-module.yml
+            - template: /Steps/publish-build-artifact.yml
+              parameters:
+                ArtifactName: "powershellModule"
+                PathToPublish: "$(Build.ArtifactStagingDirectory)"

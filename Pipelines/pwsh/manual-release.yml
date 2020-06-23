@@ -1,18 +1,17 @@
 parameters:
-  - name: ProjectOrSolutionPath
-    type: string
   - name: Major
     type: number
   - name: Minor
     type: number
+  - name: SkipTest
+    type: boolean
 
 stages:
-  - template: /Stages/build-dotnet-nuget.yml
+  - template: /Stages/build-powershell-module.yml
     parameters:
-      ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
       Major: ${{ parameters.Major }}
       Minor: ${{ parameters.Minor }}
-      Configuration: Release
+      SkipTest: ${{ parameters.SkipTest }}
       SkipBuildArtifactPackagingAndPublication: false
 
-  - template: /Stages/release-nuget.yml
+  - template: /Stages/release-powershell-module.yml

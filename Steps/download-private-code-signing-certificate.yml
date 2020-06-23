@@ -1,0 +1,9 @@
+steps:
+  - task: DownloadSecureFile@1
+    name: codeSigningCertificate
+    displayName: download code signing certificate
+    inputs:
+      secureFile: "be.stateless.pfx"
+  - powershell: |
+      Write-Host "##vso[task.setvariable variable=CodeSigningCertificatePath;]$(codeSigningCertificate.secureFilePath)"
+    displayName: udpate code signing certificate path
