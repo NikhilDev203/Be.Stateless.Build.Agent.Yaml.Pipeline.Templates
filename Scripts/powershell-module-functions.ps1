@@ -24,5 +24,6 @@ function Update-ModuleVersion {
         $Version
     )
     $pattern = "(ModuleVersion\s*=\s*['`"])\d+(?:\.\d+){1,3}(['`"])"
-    (Get-Content $Path -Encoding utf8BOM -Raw) -creplace $pattern, "`${1}$Version`${2}" | Set-Content -Path $Path -Encoding utf8BOM
+    $content = [System.IO.File]::ReadAllText($Path, [System.Text.Encoding]::UTF8) -creplace $pattern, "`${1}$Version`${2}"
+    [System.IO.File]::WriteAllText($Path, $content, [System.Text.Encoding]::UTF8)
 }
