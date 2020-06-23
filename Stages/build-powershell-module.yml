@@ -23,7 +23,7 @@ stages:
         steps:
           - checkout: self
             path: 's\m'
-          - checkout: templates
+          - checkout: pipelineTemplateRepository
             path: 's\t'
 
           - template: /Steps/generate-build-number.yml

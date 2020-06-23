@@ -11,7 +11,7 @@ stages:
           vmImage: "windows-latest"
         displayName: "Create github release and publish PowerShell Module on PSGallery"
         steps:
-          - checkout: templates
+          - checkout: pipelineTemplateRepository
             path: 's\t'
 
           - template: /Steps/download-build-artifact.yml
