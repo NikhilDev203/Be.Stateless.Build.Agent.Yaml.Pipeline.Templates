@@ -8,6 +8,7 @@ param(
 )
 
 . $PSScriptRoot\powershell-module-functions.ps1
+
 $Path = Resolve-Path -Path $Path -ErrorAction Stop
 Get-ModuleManifest -Path $Path | Import-PowerShellDataFile -Path $moduleManifestFile | Select-Object -ExpandProperty RequiredModules | ForEach-Object -Process {
     Write-Host "Importing module $_"
