@@ -12,6 +12,6 @@ param(
 $Path = Resolve-Path -Path $Path -ErrorAction Stop
 $manifest = Get-ModuleManifest -Path $Path | Import-PowerShellDataFile
 $manifest.RequiredModules | ForEach-Object -Process {
-    Write-Host "Importing module $_"
-    Install-Module -Name $_ -Scope CurrentUser -Force
+    Write-Host "Installing module $_"
+    Install-Module -Name $_ -Scope CurrentUser -SkipPublisherCheck -Force
 }
