@@ -32,6 +32,7 @@ stages:
               Minor: ${{ parameters.Minor }}
 
           - ${{ if eq(parameters.SkipTest, false) }}:
+            - template: /Steps/restore-required-powershell-modules.yml
             - template: /Steps/test-powershell-module.yml
 
           - ${{ if eq(parameters.SkipBuildArtifactPackagingAndPublication, false) }}:

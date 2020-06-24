@@ -1,0 +1,6 @@
+steps:
+  - task: PowerShell@2
+    inputs:
+      filePath: '$(Build.SourcesDirectory)\Scripts\restore-required-powershell-modules.ps1'
+      arguments: '-Path "$(Build.SourcesDirectory)\m"'
+    displayName: restore required PowerShell modules
