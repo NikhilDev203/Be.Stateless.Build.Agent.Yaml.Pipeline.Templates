@@ -13,5 +13,5 @@ $Path = Resolve-Path -Path $Path -ErrorAction Stop
 $manifest = Get-ModuleManifest -Path $Path | Import-PowerShellDataFile
 $manifest.RequiredModules | ForEach-Object -Process {
     Write-Host "Installing module $_"
-    Install-Module -Name $_ -Scope CurrentUser -SkipPublisherCheck -Force
+    Install-Module -Name $_.ModuleName -Scope CurrentUser -SkipPublisherCheck -Force
 }
