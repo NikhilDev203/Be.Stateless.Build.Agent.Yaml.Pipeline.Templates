@@ -4,7 +4,7 @@ stages:
     dependsOn: build
     condition: succeeded()
     variables:
-      - group: 'powershell-gallery'
+      - group: "powershell-gallery"
     jobs:
       - job: publish
         pool:
@@ -18,6 +18,9 @@ stages:
             parameters:
               ArtifactName: "powershellModule"
               DownloadPath: "$(System.ArtifactsDirectory)"
+
+          # required by implicit Test-ModuleManifest upon module publication
+          - template: /Steps/restore-required-powershell-modules.yml
 
           - template: /Steps/create-github-release.yml
 
