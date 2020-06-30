@@ -20,10 +20,10 @@ steps:
   - task: Pester@10
     displayName: "test PowerShell module with Pester"
     inputs:
-      scriptFolder: '$(build.sourcesdirectory)\m'
+      scriptFolder: '$(build.sourcesdirectory)'
       resultsFile: "$(build.sourcesdirectory)/powershell-module.tests.xml"
       CodeCoverageOutputFile: '$(build.sourcesdirectory)\coverage.powershell-module.xml'
-      CodeCoverageFolder: '$(build.sourcesdirectory)\m'
+      CodeCoverageFolder: '$(build.sourcesdirectory)'
       usePSCore: False
     continueOnError: true
   - task: PublishTestResults@2
@@ -39,5 +39,5 @@ steps:
     inputs:
       codeCoverageTool: "JaCoCo"
       summaryFileLocation: '$(build.sourcesdirectory)\coverage.powershell-module.xml'
-      pathToSources: '$(build.sourcesdirectory)\m'
+      pathToSources: '$(build.sourcesdirectory)'
       failIfCoverageEmpty: false

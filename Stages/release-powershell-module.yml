@@ -27,10 +27,10 @@ stages:
       - job: publish
         pool:
           vmImage: "windows-latest"
-        displayName: "Create github release and publish PowerShell Module on PSGallery"
+        displayName: "Create github release and publish PowerShell module on PowerShell Gallery"
         steps:
-          - checkout: pipelineTemplateRepository
-            path: 's\t'
+          - checkout: self
+            submodules: true
 
           - template: /Steps/download-build-artifact.yml
             parameters:

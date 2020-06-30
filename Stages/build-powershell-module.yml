@@ -37,12 +37,10 @@ stages:
       - job: build
         pool:
           vmImage: "windows-latest"
-        displayName: "Test, sign and pack"
+        displayName: "Build, test and sign PowerShell module"
         steps:
           - checkout: self
-            path: 's\m'
-          - checkout: pipelineTemplateRepository
-            path: 's\t'
+            submodules: true
 
           - template: /Steps/generate-build-number.yml
             parameters:
@@ -55,7 +53,7 @@ stages:
 
           - ? ${{ if eq(parameters.SkipBuildArtifactPackagingAndPublication, false) }}
             : - template: /Steps/download-private-code-signing-certificate.yml
-              - template: /Steps/pack-powershell-module.yml
+              - template: /Steps/build-powershell-module.yml
               - template: /Steps/publish-build-artifact.yml
                 parameters:
                   ArtifactName: "powershellModule"

@@ -19,6 +19,6 @@
 steps:
   - task: PowerShell@2
     inputs:
-      filePath: '$(Build.SourcesDirectory)\t\Scripts\pack-powershell-module.ps1'
-      arguments: '-Path $(Build.SourcesDirectory)\m -Destination $(Build.ArtifactStagingDirectory) -ModuleVersion $(Build.BuildNumber) -CertificateFilePath $(CodeSigningCertificatePath) -CertificatePassword $(ConvertTo-SecureString "$(be-stateless-certificate-password)" -AsPlainText -Force)'
-    displayName: pack PowerShell module
+      filePath: '$(Build.SourcesDirectory)\.build\pwsh\build.ps1'
+      arguments: '-Path $(Build.SourcesDirectory) -Destination $(Build.ArtifactStagingDirectory) -ModuleVersion $(Build.BuildNumber) -CertificateFilePath $(CodeSigningCertificatePath) -CertificatePassword $(ConvertTo-SecureString "$(be-stateless-certificate-password)" -AsPlainText -Force)'
+    displayName: build PowerShell module
