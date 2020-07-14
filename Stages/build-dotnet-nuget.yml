@@ -61,11 +61,6 @@ stages:
 
           - template: /Steps/download-private-signing-key.yml
 
-          - task: UseDotNet@2
-            inputs:
-              version: "3.1.x"
-              packageType: runtime
-
           - template: /Steps/dotnet-restore.yml
             parameters:
               ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
