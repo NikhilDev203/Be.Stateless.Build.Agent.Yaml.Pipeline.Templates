@@ -28,6 +28,8 @@ parameters:
     values:
       - Debug
       - Release
+  - name: SkipTest
+    type: boolean
   - name: SkipBuildArtifactPackagingAndPublication
     type: boolean
 
@@ -72,10 +74,11 @@ stages:
               Major: ${{ parameters.Major }}
               Minor: ${{ parameters.Minor }}
 
-          - template: /Steps/dotnet-test.yml
-            parameters:
-              ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
-              Configuration: ${{ parameters.Configuration }}
+          - ${{ if eq(parameters.SkipTest, false) }}:
+              - template: /Steps/dotnet-test.yml
+                parameters:
+                  ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
+                  Configuration: ${{ parameters.Configuration }}
 
           - ? ${{ if eq(parameters.SkipBuildArtifactPackagingAndPublication, false) }}
             : - template: /Steps/dotnet-pack.yml

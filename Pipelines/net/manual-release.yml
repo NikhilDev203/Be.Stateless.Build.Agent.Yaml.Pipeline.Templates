@@ -23,6 +23,9 @@ parameters:
     type: number
   - name: Minor
     type: number
+  - name: SkipTest
+    type: boolean
+    default: false
 
 stages:
   - template: /Stages/build-dotnet-nuget.yml
@@ -31,6 +34,7 @@ stages:
       Major: ${{ parameters.Major }}
       Minor: ${{ parameters.Minor }}
       Configuration: Release
+      SkiptTest: ${{ parameters.SkipTest }}
       SkipBuildArtifactPackagingAndPublication: false
 
   - template: /Stages/release-nuget.yml
