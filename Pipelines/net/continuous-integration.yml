@@ -34,5 +34,5 @@ stages:
       Major: ${{ parameters.Major }}
       Minor: ${{ parameters.Minor }}
       Configuration: Debug
-      SkiptTest: ${{ parameters.SkipTest }}
+      SkipTest: ${{ parameters.SkipTest }}
       SkipBuildArtifactPackagingAndPublication: true

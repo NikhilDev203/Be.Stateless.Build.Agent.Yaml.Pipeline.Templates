@@ -34,7 +34,7 @@ stages:
       Major: ${{ parameters.Major }}
       Minor: ${{ parameters.Minor }}
       Configuration: Release
-      SkiptTest: ${{ parameters.SkipTest }}
+      SkipTest: ${{ parameters.SkipTest }}
       SkipBuildArtifactPackagingAndPublication: false
 
   - template: /Stages/release-nuget.yml
