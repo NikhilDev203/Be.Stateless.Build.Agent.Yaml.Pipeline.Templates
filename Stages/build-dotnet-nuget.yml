@@ -32,6 +32,12 @@ parameters:
     type: boolean
   - name: SkipBuildArtifactPackagingAndPublication
     type: boolean
+  - name: BuildEngine
+    type: string
+    values:
+      - dotnet
+      - msbuild
+    default: dotnet
 
 stages:
   - stage: build
@@ -67,12 +73,21 @@ stages:
             parameters:
               ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
 
-          - template: /Steps/dotnet-build.yml
-            parameters:
-              ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
-              Configuration: ${{ parameters.Configuration }}
-              Major: ${{ parameters.Major }}
-              Minor: ${{ parameters.Minor }}
+          - ${{ if eq(parameters.BuildEngine, 'dotnet') }}:
+              - template: /Steps/dotnet-build.yml
+                parameters:
+                  ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
+                  Configuration: ${{ parameters.Configuration }}
+                  Major: ${{ parameters.Major }}
+                  Minor: ${{ parameters.Minor }}
+
+          - ${{ if eq(parameters.BuildEngine, 'msbuild') }}:
+              - template: /Steps/msbuild-build.yml
+                parameters:
+                  ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
+                  Configuration: ${{ parameters.Configuration }}
+                  Major: ${{ parameters.Major }}
+                  Minor: ${{ parameters.Minor }}
 
           - ${{ if eq(parameters.SkipTest, false) }}:
               - template: /Steps/dotnet-test.yml

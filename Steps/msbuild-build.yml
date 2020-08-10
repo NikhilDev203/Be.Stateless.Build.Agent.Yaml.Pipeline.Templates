@@ -23,23 +23,23 @@ parameters:
     type: number
   - name: Minor
     type: number
-  - name: SkipTest
-    type: boolean
-    default: false
-  - name: BuildEngine
+  - name: Configuration
     type: string
     values:
-      - dotnet
-      - msbuild
-    default: dotnet
+      - Debug
+      - Release
 
-stages:
-  - template: /Stages/build-dotnet-nuget.yml
-    parameters:
-      ProjectOrSolutionPath: ${{ parameters.ProjectOrSolutionPath }}
-      Major: ${{ parameters.Major }}
-      Minor: ${{ parameters.Minor }}
-      Configuration: Debug
-      SkipTest: ${{ parameters.SkipTest }}
-      SkipBuildArtifactPackagingAndPublication: true
-      BuildEngine: ${{ parameters.BuildEngine }}
+steps:
+  - task: MSBuild@1
+    displayName: msbuild build (${{ parameters.Configuration }})
+    inputs:
+      solution: "${{ parameters.ProjectOrSolutionPath }}"
+      msbuildVersion: "latest"
+      msbuildArchitecture: "x64"
+      # platform: "AnyCPU"
+      configuration: "${{ parameters.Configuration }}"
+      msbuildArguments: "-p:Major=${{ parameters.Major }};Minor=${{ parameters.Minor }};Build=$(VersionBuild);Revision=$(VersionRevision);AssemblyOriginatorKeyFile=$(PrivateSigningKeyPath);GeneratePackageOnBuild=false"
+      clean: false
+      restoreNugetPackages: false
+      # createLogFile: true
+      # logFileVerbosity: "detailed"
