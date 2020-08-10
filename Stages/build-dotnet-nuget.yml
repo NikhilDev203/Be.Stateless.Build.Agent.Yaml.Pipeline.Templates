@@ -42,10 +42,6 @@ parameters:
 stages:
   - stage: build
     displayName: "Build stage"
-    variables:
-      VersionBuild: 0
-      VersionRevision: 0
-      PrivateSigningKeyPath: ""
     jobs:
       - job: prepare
         displayName: "Prepare"
@@ -63,6 +59,10 @@ stages:
           vmImage: "windows-latest"
         dependsOn: prepare
         condition: succeeded()
+        variables:
+          VersionBuild: $[ dependencies.prepare.outputs['generateBuildNumber.VersionBuild'] ]
+          VersionRevision: $[ dependencies.prepare.outputs['generateBuildNumber.VersionRevision'] ]
+          PrivateSigningKeyPath: ""
         steps:
           - checkout: self
             submodules: true
